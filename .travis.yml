@@ -1,0 +1,12 @@
+language: python
+python:
+ - "2.7"
+# - "3.4"
+env:
+ - DJANGO="django==1.6.7" REST="djangorestframework=2.4.3"
+ - DJANGO="django==1.7"   REST="djangorestframework=2.4.3"
+install:
+ - pip install $DJANGO
+ - pip install $REST
+script:
+ - python setup.py test
