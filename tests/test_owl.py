@@ -4,7 +4,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 import unittest
 import json
-import time
+from time import gmtime
+from calendar import timegm
 import swapper
 
 User = swapper.load_model('auth', 'User')
@@ -73,16 +74,19 @@ class AnonymousTestCase(OwlTestCase):
         self.assertEqual(event.referer, "http://example.com/")
 
     def test_lag(self):
-        ts0 = time.mktime(time.gmtime())
-        ts1 = ts0 - 6000
-        ts2 = ts0 - 1000
+        ts0 = timegm(gmtime())
+        ts1 = ts0 - 10 * 60
+        ts2 = ts1 - 10 * 60
         self.log([
             {"path": "/",         "client_date": ts2},
             {"path": "/items/",   "client_date": ts1},
             {"path": "/items/1/", "client_date": ts0},
         ])
+
         events = Event.objects.order_by('client_date')
+        self.assertEqual(events[0].lag.seconds / 60, 20)
         self.assertEqual(events[1].lag.seconds / 60, 10)
+        self.assertEqual(events[2].lag.seconds / 60,  0)
 
 
 class LoggedInTestCase(OwlTestCase):

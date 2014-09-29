@@ -1,7 +1,6 @@
 from rest_framework_bulk import BulkCreateAPIView
 from rest_framework.renderers import JSONRenderer
 
-#from .models import Client, Event, EventType
 from .models import Event
 from .serializers import EventSerializer
 
