@@ -40,6 +40,7 @@ setup(
     install_requires=[
         'djangorestframework',#>=2.4',
         'djangorestframework-bulk',
+        'swapper',
     ],
     classifiers=[
         'Framework :: Django',
