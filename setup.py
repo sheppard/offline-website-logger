@@ -57,5 +57,5 @@ setup(
         'Topic :: Scientific/Engineering :: Visualization',
     ],
     test_suite='tests',
-#    tests_require=['wq.db'],
+    tests_require=['ua_parser'],
 )

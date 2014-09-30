@@ -41,6 +41,7 @@ class AnonymousTestCase(OwlTestCase):
 
         self.assertEqual(event.session.client.ip_address, "127.0.0.1")
         self.assertEqual(event.session.client.user_agent, "Test Client 1.0")
+        self.assertEqual(event.session.client.browser, "Other")
         self.assertEqual(event.path, "/items/1/")
         self.assertEqual(event.action, "view")
 

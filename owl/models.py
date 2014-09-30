@@ -24,6 +24,12 @@ class Client(models.Model):
     def __str__(self):
         return self.ip_address
 
+    @property
+    def browser(self):
+        from ua_parser import user_agent_parser
+        result = user_agent_parser.Parse(self.user_agent)
+        return result['user_agent']['family']
+
     class Meta:
         unique_together = [
             'ip_address', 'user_agent',
@@ -62,9 +68,14 @@ class Session(models.Model):
 
     def __str__(self):
         if self.user is not None:
-            return str(self.user)
+            user = str(self.user)
         else:
-            return self.client.ip_address
+            user = self.client.ip_address
+        return "%s/%s@%s" % (
+            user,
+            self.client.browser,
+            self.client_key[:5]
+        )
 
     class Meta:
         unique_together = [
@@ -84,7 +95,14 @@ class Event(models.Model):
     @property
     def lag(self):
         if self.client_date:
-            return self.server_date - self.client_date
+            delta = self.server_date - self.client_date
+            if delta.days < 0:
+                # Negative delta - client clock is fast or server is slow
+                delta = -delta
+                return "-%s" % (
+                    (delta.seconds * 1e6 + delta.microseconds) / 1e6
+                )
+            return delta
 
     def __str__(self):
         return "%s %sed %s" % (self.session, self.action, self.path)
