@@ -39,29 +39,24 @@ class AnonymousTestCase(OwlTestCase):
         self.log([{"path": "/items/1/"}])
         event = Event.objects.all()[0]
 
-        self.assertEqual(event.client.ip_address, "127.0.0.1")
-        self.assertEqual(event.client.user_agent, "Test Client 1.0")
+        self.assertEqual(event.session.client.ip_address, "127.0.0.1")
+        self.assertEqual(event.session.client.user_agent, "Test Client 1.0")
         self.assertEqual(event.path, "/items/1/")
         self.assertEqual(event.action, "view")
-
-        self.assertIsNotNone(event.content_object)
-        self.assertTrue(isinstance(event.content_object, Item))
 
     def test_log_notexist(self):
         self.log([{"path": "/items/2/"}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
 
-        self.assertEqual(event.client.ip_address, "127.0.0.1")
+        self.assertEqual(event.session.client.ip_address, "127.0.0.1")
         self.assertEqual(event.path, "/items/2/")
-        self.assertIsNone(event.content_object)
 
     def test_log_invalid_url(self):
         self.log([{"path": "/invalid/"}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
         self.assertEqual(event.path, "/invalid/")
-        self.assertIsNone(event.content_object)
 
     def test_custom_action(self):
         self.log([{"path": "/items/1/", "action": "edit"}])
@@ -102,11 +97,11 @@ class LoggedInTestCase(OwlTestCase):
         self.log([{"path": "/items/1/"}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
-        self.assertEqual(event.client.user, self.user)
+        self.assertEqual(event.session.user, self.user)
 
     def test_session(self):
         self.log([{"path": "/items/1/", "client_key": 1234}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
-        self.assertEqual(event.client.client_key, "1234")
-        self.assertIsNotNone(event.client.server_key)
+        self.assertEqual(event.session.client_key, "1234")
+        self.assertIsNotNone(event.session.server_key)

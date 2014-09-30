@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework.fields import DateTimeField
-from .models import Client, Event
+from .models import Session, Event
 from datetime import datetime
 from django.utils.timezone import utc
 
@@ -17,10 +17,10 @@ class EventSerializer(ModelSerializer):
     client_date = EpochField(required=False)
 
     def from_native(self, data, files):
-        client = Client.objects.get_from_request(
+        session = Session.objects.get_from_request(
             self.context['request']
         )
-        data['client'] = client.pk
+        data['session'] = session.pk
         return super(EventSerializer, self).from_native(data, files)
 
     class Meta:
