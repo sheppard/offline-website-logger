@@ -5,9 +5,14 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'owl',
     'tests.test_app',
+    'rest_framework',
+    'django.contrib.staticfiles',
 )
+STATIC_URL = "/static/"
 MIDDLEWARE_CLASSES = (
+    'owl.middleware.ServerEventMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 ROOT_URLCONF = 'tests.urls'
 DATABASES = {

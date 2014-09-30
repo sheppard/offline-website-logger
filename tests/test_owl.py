@@ -84,6 +84,19 @@ class AnonymousTestCase(OwlTestCase):
         self.assertEqual(events[1].lag.seconds / 60, 10)
         self.assertEqual(events[2].lag.seconds / 60,  0)
 
+    def test_server_view(self):
+        # Server-rendered HTML should cause log events
+        res = self.client.get("/items/1/", HTTP_ACCEPT="text/html")
+        self.assertGreater(Event.objects.count(), 0)
+        event = Event.objects.all()[0]
+        self.assertEqual(event.path, "/items/1/")
+        self.assertEqual(event.action, "server:view")
+
+    def test_api_fetch(self):
+        # JSON fetches should not cause log events
+        res = self.client.get("/items/1/", HTTP_ACCEPT="application/json")
+        self.assertEqual(Event.objects.count(), 0)
+
 
 class LoggedInTestCase(OwlTestCase):
     def setUp(self):

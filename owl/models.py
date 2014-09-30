@@ -42,10 +42,13 @@ class SessionManager(models.Manager):
         user = request.user
         if not user.is_authenticated():
             user = None
-        if isinstance(request.DATA, list) and len(request.DATA) > 0:
+
+        DATA = getattr(request, 'DATA', None)
+        if isinstance(DATA, list) and len(DATA) > 0:
             client_key = request.DATA[0].get('client_key', None)
         else:
             client_key = None
+
         server_key = request.session._get_or_create_session_key()
         session, is_new = self.get_or_create(
             user=user,
@@ -74,7 +77,7 @@ class Session(models.Model):
         return "%s/%s@%s" % (
             user,
             self.client.browser,
-            self.client_key[:5]
+            self.client_key[:5] if self.client_key else "server"
         )
 
     class Meta:
@@ -108,4 +111,4 @@ class Event(models.Model):
         return "%s %sed %s" % (self.session, self.action, self.path)
 
     class Meta:
-        ordering = ["-client_date"]
+        ordering = ["-server_date"]

@@ -19,8 +19,8 @@ class SessionAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['session', 'action', 'path', 'client_date', 'lag']
-    list_filter = ['action', 'client_date', 'session']
+    list_display = ['session', 'action', 'path', 'server_date', 'lag']
+    list_filter = ['action', 'server_date', 'session']
 
 
 admin.site.register(Client, ClientAdmin)

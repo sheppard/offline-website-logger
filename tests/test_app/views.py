@@ -4,8 +4,7 @@ from .models import Item
 
 
 class ItemViewSet(ModelViewSet):
-    queryset = Item.objects.all()
-
+    model = Item
 
 router = DefaultRouter()
 router.register('items', ItemViewSet, 'item')
