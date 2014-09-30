@@ -96,9 +96,17 @@ class LoggedInTestCase(OwlTestCase):
             username="testuser"
         )
         self.client.force_authenticate(self.user)
+        self.client.session['1234'] = "1234"
 
     def test_log(self):
         self.log([{"path": "/items/1/"}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
         self.assertEqual(event.client.user, self.user)
+
+    def test_session(self):
+        self.log([{"path": "/items/1/", "key": 1234}])
+        self.assertEqual(Event.objects.count(), 1)
+        event = Event.objects.all()[0]
+        self.assertEqual(event.client.client_key, "1234")
+        self.assertIsNotNone(event.client.server_key)

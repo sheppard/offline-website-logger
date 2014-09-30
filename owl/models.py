@@ -12,10 +12,17 @@ class ClientManager(models.Manager):
             user = None
         ip_address = request.META.get('REMOTE_ADDR', None)
         user_agent = request.META.get('HTTP_USER_AGENT', None)
+        if isinstance(request.DATA, list) and len(request.DATA) > 0:
+            client_key = request.DATA[0].get('key', None)
+        else:
+            client_key = None
+        server_key = request.session._get_or_create_session_key()
         client, is_new = self.get_or_create(
             user=user,
             ip_address=ip_address,
             user_agent=user_agent,
+            client_key=client_key,
+            server_key=server_key,
         )
         return client
 
@@ -23,6 +30,8 @@ class ClientManager(models.Manager):
 class Client(models.Model):
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.CharField(null=True, blank=True, max_length=255)
+    client_key = models.CharField(null=True, blank=True, max_length=255)
+    server_key = models.CharField(null=True, blank=True, max_length=255)
     user = models.ForeignKey(
         swapper.get_model_name('auth', 'User'), null=True, blank=True
     )
