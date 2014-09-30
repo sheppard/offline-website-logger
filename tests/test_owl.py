@@ -105,7 +105,7 @@ class LoggedInTestCase(OwlTestCase):
         self.assertEqual(event.client.user, self.user)
 
     def test_session(self):
-        self.log([{"path": "/items/1/", "key": 1234}])
+        self.log([{"path": "/items/1/", "client_key": 1234}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
         self.assertEqual(event.client.client_key, "1234")

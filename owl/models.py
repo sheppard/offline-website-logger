@@ -13,7 +13,7 @@ class ClientManager(models.Manager):
         ip_address = request.META.get('REMOTE_ADDR', None)
         user_agent = request.META.get('HTTP_USER_AGENT', None)
         if isinstance(request.DATA, list) and len(request.DATA) > 0:
-            client_key = request.DATA[0].get('key', None)
+            client_key = request.DATA[0].get('client_key', None)
         else:
             client_key = None
         server_key = request.session._get_or_create_session_key()
@@ -44,7 +44,9 @@ class Client(models.Model):
         return self.ip_address
 
     class Meta:
-        unique_together = ['ip_address', 'user_agent', 'user']
+        unique_together = [
+            'ip_address', 'user_agent', 'user', 'client_key', 'server_key'
+        ]
 
 
 class Event(models.Model):
@@ -87,8 +89,11 @@ class Event(models.Model):
             return
 
         cls = getattr(func.cls, 'model', None)
-        if not cls:
+        if not cls and getattr(func.cls, 'queryset', None) is not None:
             cls = func.cls.queryset.model
+
+        if not cls:
+            return
 
         try:
             instance = cls.objects.get(**resolved.kwargs)
@@ -99,3 +104,6 @@ class Event(models.Model):
 
     def __str__(self):
         return "%s %sed %s" % (self.client, self.action, self.path)
+
+    class Meta:
+        ordering = ["-client_date"]
