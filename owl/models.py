@@ -39,9 +39,9 @@ class Client(models.Model):
 class SessionManager(models.Manager):
     def get_from_request(self, request):
         client = Client.objects.get_from_request(request)
-        user = request.user
-        if not user.is_authenticated():
-            user = None
+        user = None
+        if hasattr(request, 'user') and request.user.is_authenticated():
+            user = request.user
 
         DATA = getattr(request, 'DATA', None)
         if isinstance(DATA, list) and len(DATA) > 0:
