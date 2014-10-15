@@ -91,7 +91,7 @@ class Event(models.Model):
     client_date = models.DateTimeField(null=True, blank=True)
     server_date = models.DateTimeField(auto_now_add=True)
     path = models.CharField(max_length=255)
-    referer = models.URLField(null=True, blank=True)
+    referer = models.URLField(max_length=255, null=True, blank=True)
     action = models.CharField(max_length=255, default="view")
     data = models.TextField(null=True, blank=True)
 
