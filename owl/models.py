@@ -26,6 +26,8 @@ class Client(models.Model):
 
     @property
     def browser(self):
+        if not self.user_agent:
+            return None
         from ua_parser import user_agent_parser
         result = user_agent_parser.Parse(self.user_agent)
         return result['user_agent']['family']
@@ -91,7 +93,7 @@ class Event(models.Model):
     client_date = models.DateTimeField(null=True, blank=True)
     server_date = models.DateTimeField(auto_now_add=True)
     path = models.CharField(max_length=255)
-    referer = models.URLField(max_length=255, null=True, blank=True)
+    referer = models.TextField(null=True, blank=True)
     action = models.CharField(max_length=255, default="view")
     data = models.TextField(null=True, blank=True)
 
