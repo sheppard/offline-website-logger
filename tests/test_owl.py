@@ -80,9 +80,9 @@ class AnonymousTestCase(OwlTestCase):
         ])
 
         events = Event.objects.order_by('client_date')
-        self.assertEqual(events[0].lag.seconds / 60, 20)
-        self.assertEqual(events[1].lag.seconds / 60, 10)
-        self.assertEqual(events[2].lag.seconds / 60,  0)
+        self.assertEqual(int(events[0].lag.seconds / 60), 20)
+        self.assertEqual(int(events[1].lag.seconds / 60), 10)
+        self.assertEqual(int(events[2].lag.seconds / 60),  0)
 
     def test_server_view(self):
         # Server-rendered HTML should cause log events
@@ -102,18 +102,28 @@ class LoggedInTestCase(OwlTestCase):
     def setUp(self):
         super(LoggedInTestCase, self).setUp()
         self.user = User.objects.create(
-            username="testuser"
+            username="testuser",
         )
-        self.client.force_authenticate(self.user)
-        self.client.session['1234'] = "1234"
+        self.user.set_password('1234')
+        self.user.save()
+
+    def do_auth(self):
+        response = self.client.post('/auth/login/', {
+            'username': 'testuser',
+            'password': '1234',
+        })
+        self.assertTrue(self.client.session)
+        Event.objects.all().delete()
 
     def test_log(self):
+        self.do_auth()
         self.log([{"path": "/items/1/"}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]
         self.assertEqual(event.session.user, self.user)
 
     def test_session(self):
+        self.do_auth()
         self.log([{"path": "/items/1/", "client_key": 1234}])
         self.assertEqual(Event.objects.count(), 1)
         event = Event.objects.all()[0]

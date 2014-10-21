@@ -52,7 +52,7 @@ class SessionManager(models.Manager):
             client_key = None
 
         if hasattr(request, "session"):
-            server_key = request.session._get_or_create_session_key()
+            server_key = request.session._session_key
         else:
             server_key = None
         session, is_new = self.get_or_create(
