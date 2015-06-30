@@ -21,6 +21,9 @@ class SessionAdmin(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     list_display = ['session', 'action', 'path', 'server_date', 'lag']
     list_filter = ['action', 'server_date', 'session']
+    readonly_fields = [
+        'session', 'client_date', 'path', 'referer', 'action', 'data'
+    ]
 
 
 admin.site.register(Client, ClientAdmin)
