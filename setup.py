@@ -34,7 +34,7 @@ setup(
     author_email='andrew@wq.io',
     url='https://github.com/wq/offline-web-log',
     license='MIT',
-    packages=['owl'],
+    packages=['owl', 'owl.migrations'],
     description=LONG_DESCRIPTION.strip(),
     long_description=parse_markdown_readme(),
     install_requires=[

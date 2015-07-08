@@ -87,7 +87,7 @@ class Session(models.Model):
 
     class Meta:
         unique_together = [
-            'user', 'client_key', 'server_key'
+            'client', 'user', 'client_key', 'server_key'
         ]
 
 
