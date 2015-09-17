@@ -1,7 +1,8 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from .views import LogView
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^', LogView.as_view()),
 )

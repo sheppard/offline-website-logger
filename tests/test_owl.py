@@ -2,14 +2,13 @@ from __future__ import unicode_literals
 
 from rest_framework.test import APITestCase
 from rest_framework import status
-import unittest
 import json
 from time import gmtime
 from calendar import timegm
 import swapper
 
 User = swapper.load_model('auth', 'User')
-from owl.models import Client, Event
+from owl.models import Event
 from tests.test_app.models import Item
 
 
@@ -25,7 +24,10 @@ class OwlTestCase(APITestCase):
             data=data,
             HTTP_USER_AGENT="Test Client 1.0",
         )
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertTrue(
+            status.is_success(response.status_code),
+            response.status_code,
+        )
         self.assertEqual(Event.objects.count(), len(events))
         return response
 
@@ -86,7 +88,7 @@ class AnonymousTestCase(OwlTestCase):
 
     def test_server_view(self):
         # Server-rendered HTML should cause log events
-        res = self.client.get("/items/1/", HTTP_ACCEPT="text/html")
+        self.client.get("/items/1/", HTTP_ACCEPT="text/html")
         self.assertGreater(Event.objects.count(), 0)
         event = Event.objects.all()[0]
         self.assertEqual(event.path, "/items/1/")
@@ -94,7 +96,7 @@ class AnonymousTestCase(OwlTestCase):
 
     def test_api_fetch(self):
         # JSON fetches should not cause log events
-        res = self.client.get("/items/1/", HTTP_ACCEPT="application/json")
+        self.client.get("/items/1/", HTTP_ACCEPT="application/json")
         self.assertEqual(Event.objects.count(), 0)
 
 
@@ -108,7 +110,7 @@ class LoggedInTestCase(OwlTestCase):
         self.user.save()
 
     def do_auth(self):
-        response = self.client.post('/auth/login/', {
+        self.client.post('/auth/login/', {
             'username': 'testuser',
             'password': '1234',
         })

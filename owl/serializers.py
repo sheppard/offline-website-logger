@@ -6,7 +6,7 @@ from django.utils.timezone import utc
 
 
 class EpochField(DateTimeField):
-    def from_native(self, value):
+    def to_internal_value(self, value):
         if value is not None:
             date = datetime.utcfromtimestamp(float(value))
             date = date.replace(tzinfo=utc)
@@ -16,12 +16,12 @@ class EpochField(DateTimeField):
 class EventSerializer(ModelSerializer):
     client_date = EpochField(required=False)
 
-    def from_native(self, data, files):
+    def to_internal_value(self, data):
         session = Session.objects.get_from_request(
             self.context['request']
         )
         data['session'] = session.pk
-        return super(EventSerializer, self).from_native(data, files)
+        return super(EventSerializer, self).to_internal_value(data)
 
     class Meta:
         model = Event

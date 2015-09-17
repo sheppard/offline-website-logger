@@ -1,8 +1,5 @@
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey
 import swapper
-from django.core.urlresolvers import resolve, Resolver404
 
 
 class ClientManager(models.Manager):
@@ -45,9 +42,9 @@ class SessionManager(models.Manager):
         if hasattr(request, 'user') and request.user.is_authenticated():
             user = request.user
 
-        DATA = getattr(request, 'DATA', None)
-        if isinstance(DATA, list) and len(DATA) > 0:
-            client_key = request.DATA[0].get('client_key', None)
+        data = getattr(request, 'data', None)
+        if isinstance(data, list) and len(data) > 0:
+            client_key = request.data[0].get('client_key', None)
         else:
             client_key = None
 
