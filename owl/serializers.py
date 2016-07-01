@@ -17,6 +17,7 @@ class EventSerializer(ModelSerializer):
     client_date = EpochField(required=False)
 
     def to_internal_value(self, data):
+        data = data.copy()
         session = Session.objects.get_from_request(
             self.context['request']
         )
