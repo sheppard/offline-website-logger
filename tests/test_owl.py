@@ -5,11 +5,12 @@ from rest_framework import status
 import json
 from time import gmtime
 from calendar import timegm
+
+from owl.models import Event
+from tests.test_app.models import Item
 import swapper
 
 User = swapper.load_model('auth', 'User')
-from owl.models import Event
-from tests.test_app.models import Item
 
 
 class OwlTestCase(APITestCase):
